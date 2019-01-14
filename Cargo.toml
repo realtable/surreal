@@ -1,0 +1,13 @@
+[package]
+name = "surreal"
+version = "0.0.1"
+authors = ["Josh Quail <josh@madbean.com>"]
+
+description = "A Rust library that implements John H. Conway's surreal numbers"
+repository = "https://github.com/realtable/surreal"
+readme = "README.md"
+license = "MIT"
+keywords = ["math", "surreal", "knuth", "conway"]
+categories = ["science"]
+
+[dependencies]
