@@ -1,14 +1,40 @@
+//! Implementation of J. H. Conway's surreal numbers, as explained in the book
+//! *[Surreal Numbers](https://www.amazon.com/dp/0201038129)* by Donald Knuth. This crate provides
+//! an interface to the rules and theorems in the book, as well as a comprehensive surreal type.
+
 use std::cmp::Ordering;
 use std::fmt;
 
-mod first; // first half
+mod first;
 
+/// A struct to represent surreal numbers with non-infinite sets.
+#[derive(Debug)]
 pub struct Surreal {
     left: Vec<Surreal>,
     right: Vec<Surreal>,
 }
 
 impl Surreal {
+    /// Creates a new surreal number given two vectors of references to surreal numbers. Each
+    /// vector corresponds to a left set and a right set, where each number in the left set must
+    /// be less than all numbers in the right set.
+    ///
+    /// # Panics
+    ///
+    /// Panics if any `Surreal` in `left` is greater than or equal to any `Surreal` in `right`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// // the lines below will compile
+    /// let zero = surreal::Surreal::new(vec![], vec![]);
+    /// let one = surreal::Surreal::new(vec![&zero], vec![]);
+    /// let neg_one = surreal::Surreal::new(vec![], vec![&zero]);
+    ///
+    /// // the lines below will panic
+    /// // let err = surreal::Surreal::new(vec![&one], vec![&neg_one]);
+    /// // let err = surreal::Surreal::new(vec![&zero], vec![&zero]);
+    /// ```
     pub fn new(left: Vec<&Surreal>, right: Vec<&Surreal>) -> Surreal {
         for xl in &left {
             for xr in &right {
@@ -18,13 +44,35 @@ impl Surreal {
             }
         }
         
-        Surreal { left: cnv(left), right: cnv(right) }    
-    } // rule 1
+        Surreal { left: first::cnv(left), right: first::cnv(right) }    
+    }
     
+    /// Returns the left set of a surreal number (as a `Vec<Surreal>` instead of a
+    /// `Vec<&Surreal>`). 
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # let zero = surreal::Surreal::new(vec![], vec![]);
+    /// let one = surreal::Surreal::new(vec![&zero], vec![]);
+    ///
+    /// assert!(one.left()[0] == zero);
+    /// ```
     pub fn left(&self) -> Vec<Surreal> {
         first::cpy(&self.left)
     }
     
+    /// Returns the right set of a surreal number (as a `Vec<Surreal>` instead of a
+    /// `Vec<&Surreal>`). 
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # let zero = surreal::Surreal::new(vec![], vec![]);
+    /// let neg_one = surreal::Surreal::new(vec![], vec![&zero]);
+    ///
+    /// assert!(neg_one.right()[0] == zero);
+    /// ```
     pub fn right(&self) -> Vec<Surreal> {
         first::cpy(&self.right)
     }
@@ -35,7 +83,7 @@ impl PartialEq for Surreal {
         first::bbl(&self.left).last() == first::bbl(&other.left).last() &&
         first::bbl(&self.right).first() == first::bbl(&other.right).first()
     }
-} // theorem 8
+}
 
 impl PartialOrd for Surreal {
     fn partial_cmp(&self, other: &Surreal) -> Option<Ordering> {
@@ -47,7 +95,7 @@ impl PartialOrd for Surreal {
             Some(Ordering::Equal)
         }
     }
-} // theorem 4
+}
 
 impl fmt::Display for Surreal {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -59,12 +107,9 @@ impl fmt::Display for Surreal {
             s
         };
         
-        write!(f, "({{{}}}, {{{}}})", fmt_vec(&self.left), fmt_vec(&self.right))
+        write!(f, "Surreal ({{{}}}, {{{}}})", fmt_vec(&self.left), fmt_vec(&self.right))
     }
 }
 
-fn cnv(sur: Vec<&Surreal>) -> Vec<Surreal> {
-    sur.into_iter().map(|n| {
-        Surreal { left: first::cpy(&n.left), right: first::cpy(&n.right) }
-    }).collect()
-}
+#[cfg(test)]
+mod tests;

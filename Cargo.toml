@@ -1,9 +1,9 @@
 [package]
 name = "surreal"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["Josh Quail <josh@madbean.com>"]
 
-description = "A Rust library that implements John H. Conway's surreal numbers"
+description = "A Rust library that implements J. H. Conway's surreal numbers"
 repository = "https://github.com/realtable/surreal"
 readme = "README.md"
 license = "MIT"

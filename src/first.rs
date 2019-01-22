@@ -14,7 +14,7 @@ pub fn leq(x: &Surreal, y: &Surreal) -> bool {
     }
     
     true
-} // rule 2
+}
 
 pub fn bbl(sur: &Vec<Surreal>) -> Vec<Surreal> {
     let mut res = cpy(sur);
@@ -28,7 +28,7 @@ pub fn bbl(sur: &Vec<Surreal>) -> Vec<Surreal> {
     }
     
     res
-} // bubble sort
+}
 
 pub fn cpy(sur: &Vec<Surreal>) -> Vec<Surreal> {
     let mut res = vec![];
@@ -42,4 +42,10 @@ pub fn cpy(sur: &Vec<Surreal>) -> Vec<Surreal> {
     }
     
     res
+}
+
+pub fn cnv(sur: Vec<&Surreal>) -> Vec<Surreal> {
+    sur.into_iter().map(|n| {
+        Surreal { left: cpy(&n.left), right: cpy(&n.right) }
+    }).collect()
 }
