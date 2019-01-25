@@ -4,11 +4,13 @@
 
 use std::cmp::Ordering;
 use std::fmt;
+use std::ops;
 
 mod first;
+mod second;
 
 /// A struct to represent surreal numbers with non-infinite sets.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Surreal {
     left: Vec<Surreal>,
     right: Vec<Surreal>,
@@ -43,12 +45,15 @@ impl Surreal {
                 }
             }
         }
-        
-        Surreal { left: first::cnv(left), right: first::cnv(right) }    
+
+        Surreal {
+            left: first::cnv(left),
+            right: first::cnv(right),
+        }
     }
-    
+
     /// Returns the left set of a surreal number (as a `Vec<Surreal>` instead of a
-    /// `Vec<&Surreal>`). 
+    /// `Vec<&Surreal>`).
     ///
     /// # Examples
     ///
@@ -59,11 +64,11 @@ impl Surreal {
     /// assert!(one.left()[0] == zero);
     /// ```
     pub fn left(&self) -> Vec<Surreal> {
-        first::cpy(&self.left)
+        self.left.clone()
     }
-    
+
     /// Returns the right set of a surreal number (as a `Vec<Surreal>` instead of a
-    /// `Vec<&Surreal>`). 
+    /// `Vec<&Surreal>`).
     ///
     /// # Examples
     ///
@@ -74,14 +79,13 @@ impl Surreal {
     /// assert!(neg_one.right()[0] == zero);
     /// ```
     pub fn right(&self) -> Vec<Surreal> {
-        first::cpy(&self.right)
+        self.right.clone()
     }
 }
 
 impl PartialEq for Surreal {
     fn eq(&self, other: &Surreal) -> bool {
-        first::bbl(&self.left).last() == first::bbl(&other.left).last() &&
-        first::bbl(&self.right).first() == first::bbl(&other.right).first()
+        first::leq(self, other) && first::leq(other, self)
     }
 }
 
@@ -97,6 +101,30 @@ impl PartialOrd for Surreal {
     }
 }
 
+impl<'a, 'b> ops::Add<&'b Surreal> for &'a Surreal {
+    type Output = Surreal;
+
+    fn add(self, other: &'b Surreal) -> Surreal {
+        second::add(&self, &other)
+    }
+}
+
+impl<'a> ops::Neg for &'a Surreal {
+    type Output = Surreal;
+
+    fn neg(self) -> Surreal {
+        second::neg(&self)
+    }
+}
+
+impl<'a, 'b> ops::Sub<&'b Surreal> for &'a Surreal {
+    type Output = Surreal;
+
+    fn sub(self, other: &'b Surreal) -> Surreal {
+        second::add(&self, &second::neg(&other))
+    }
+}
+
 impl fmt::Display for Surreal {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let fmt_vec = |v: &Vec<Surreal>| {
@@ -106,8 +134,13 @@ impl fmt::Display for Surreal {
             }
             s
         };
-        
-        write!(f, "Surreal ({{{}}}, {{{}}})", fmt_vec(&self.left), fmt_vec(&self.right))
+
+        write!(
+            f,
+            "Surreal ({{{}}}, {{{}}})",
+            fmt_vec(&self.left),
+            fmt_vec(&self.right)
+        )
     }
 }
 
