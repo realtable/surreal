@@ -5,10 +5,12 @@ pub fn add(x: &Surreal, y: &Surreal) -> Surreal {
         v.clone().into_iter().map(|i| add(&i, n)).collect()
     };
 
-    Surreal {
-        left: app(recurse(&x.left, y), recurse(&y.left, x)),
-        right: app(recurse(&x.right, y), recurse(&y.right, x)),
-    }
+    let mut left = recurse(&x.left, y);
+    left.append(&mut recurse(&y.left, x));
+    let mut right = recurse(&x.right, y);
+    right.append(&mut recurse(&y.right, x));
+
+    Surreal { left, right }
 }
 
 pub fn neg(sur: &Surreal) -> Surreal {
@@ -21,12 +23,25 @@ pub fn neg(sur: &Surreal) -> Surreal {
     }
 }
 
-fn app(x: Vec<Surreal>, y: Vec<Surreal>) -> Vec<Surreal> {
-    let mut res = x.clone();
+pub fn mul(x: &Surreal, y: &Surreal) -> Surreal {
+    let mut left = vec![];
+    let mut right = vec![];
 
-    for i in y {
-        res.push(i);
+    let recurse = |v: &Vec<Surreal>, w: &mut Vec<Surreal>, n| {
+        for i in v {
+            w.push(&(&mul(n, y) + &mul(x, &i)) - &mul(&i, n));
+        }
+    };
+        
+    for i in &x.left {
+        recurse(&y.left, &mut left, i);
+        recurse(&y.right, &mut right, i);
     }
-
-    res
+    
+    for i in &x.right {
+        recurse(&y.right, &mut left, i);
+        recurse(&y.left, &mut right, i);
+    }
+    
+    Surreal { left, right }
 }

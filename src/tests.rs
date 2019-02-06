@@ -20,21 +20,51 @@ fn test_cmp() {
 #[test]
 fn test_ops() {
     let v = day_gen(4);
+    let w = day_gen(2);
+
+    let neg_one = Surreal {
+        left: vec![],
+        right: vec![Surreal {
+            left: vec![],
+            right: vec![],
+        }],
+    };
+    
     let zero = Surreal {
         left: vec![],
         right: vec![],
     };
-
+    
+    let one = Surreal {
+        left: vec![Surreal {
+            left: vec![],
+            right: vec![],
+        }],
+        right: vec![],
+    };
+    
     for i in 0..v.len() {
         assert!(-&v[i] == v[v.len() - i - 1]);
         assert!(&v[i] + &v[v.len() - i - 1] == zero);
         assert!(&v[i] + &zero == v[i]);
+    
+        assert!(&v[i] * &neg_one == -&v[i]);
+        assert!(&v[i] * &zero == zero);
+        assert!(&v[i] * &one == v[i]);
+    }
 
-        for j in 0..v.len() {
-            if (i < v.len() / 2) && (j < v.len() / 2) {
-                assert!(&v[i] + &v[j] < zero);
-            } else if (i > v.len() / 2) && (j > v.len() / 2) {
-                assert!(&v[i] + &v[j] > zero);
+    for i in 0..w.len() {
+        for j in 0..w.len() {
+            if (i != w.len() / 2) && (j != w.len() / 2) {
+                if (i < w.len() / 2) && (j < w.len() / 2) {
+                    assert!(&w[i] + &w[j] < zero);
+                    assert!(&w[i] * &w[j] > zero);
+                } else if (i > w.len() / 2) && (j > w.len() / 2) {
+                    assert!(&w[i] + &w[j] > zero);
+                    assert!(&w[i] * &w[j] > zero);
+                } else {
+                    assert!(&w[i] * &w[j] < zero);
+                }
             }
         }
     }

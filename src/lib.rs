@@ -58,9 +58,10 @@ impl Surreal {
     /// # Examples
     ///
     /// ```
-    /// # let zero = surreal::Surreal::new(vec![], vec![]);
+    /// let zero = surreal::Surreal::new(vec![], vec![]);
     /// let one = surreal::Surreal::new(vec![&zero], vec![]);
     ///
+    /// assert!(zero.left().is_empty());
     /// assert!(one.left()[0] == zero);
     /// ```
     pub fn left(&self) -> Vec<Surreal> {
@@ -73,9 +74,10 @@ impl Surreal {
     /// # Examples
     ///
     /// ```
-    /// # let zero = surreal::Surreal::new(vec![], vec![]);
+    /// let zero = surreal::Surreal::new(vec![], vec![]);
     /// let neg_one = surreal::Surreal::new(vec![], vec![&zero]);
     ///
+    /// assert!(zero.right().is_empty());
     /// assert!(neg_one.right()[0] == zero);
     /// ```
     pub fn right(&self) -> Vec<Surreal> {
@@ -105,7 +107,16 @@ impl<'a, 'b> ops::Add<&'b Surreal> for &'a Surreal {
     type Output = Surreal;
 
     fn add(self, other: &'b Surreal) -> Surreal {
-        second::add(&self, &other)
+        second::add(self, other)
+    }
+}
+
+/// **Warning:** Runs very slowly on numbers created on or after day 4.
+impl<'a, 'b> ops::Mul<&'b Surreal> for &'a Surreal {
+    type Output = Surreal;
+
+    fn mul(self, other: &'b Surreal) -> Surreal {
+        second::mul(self, other)
     }
 }
 
@@ -113,7 +124,7 @@ impl<'a> ops::Neg for &'a Surreal {
     type Output = Surreal;
 
     fn neg(self) -> Surreal {
-        second::neg(&self)
+        second::neg(self)
     }
 }
 
@@ -121,7 +132,7 @@ impl<'a, 'b> ops::Sub<&'b Surreal> for &'a Surreal {
     type Output = Surreal;
 
     fn sub(self, other: &'b Surreal) -> Surreal {
-        second::add(&self, &second::neg(&other))
+        second::add(self, &second::neg(other))
     }
 }
 

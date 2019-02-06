@@ -11,10 +11,11 @@ the book and (so far) contains:
 
 * a basic surreal type
   * comparison and ordering
-  * ~~arithmetic system~~
+  * arithmetic system
+* ~~numbers past aleph day~~
+  * ~~infinite sets~~
+  * ~~constants (ω and ε)~~
 * ~~decimal/surreal conversion~~
-* ~~infinite sets (aleph day)~~
-* ~~constants like ω and ε~~
 * ~~pseudo-number implementation~~
 
 | home  | https://github.com/realtable/surreal    |
