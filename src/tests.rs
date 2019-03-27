@@ -1,8 +1,11 @@
-use super::*;
+use super::Surreal;
+
+static TESTS: i32 = 5;
+static BROKEN: i32 = 3;
 
 #[test]
-fn test_cmp() {
-    let v = day_gen(5);
+fn test_gt_eq_lt() {
+    let v = day_gen(TESTS);
 
     for i in 0..v.len() {
         for j in 0..v.len() {
@@ -18,60 +21,71 @@ fn test_cmp() {
 }
 
 #[test]
-fn test_ops() {
-    let v = day_gen(4);
-    let w = day_gen(2);
+fn test_add_neg() {
+    let v = day_gen(TESTS);
 
-    let neg_one = Surreal {
-        left: vec![],
-        right: vec![Surreal {
-            left: vec![],
-            right: vec![],
-        }],
-    };
-    
     let zero = Surreal {
         left: vec![],
         right: vec![],
     };
-    
-    let one = Surreal {
-        left: vec![Surreal {
-            left: vec![],
-            right: vec![],
-        }],
-        right: vec![],
-    };
-    
+
     for i in 0..v.len() {
         assert!(-&v[i] == v[v.len() - i - 1]);
         assert!(&v[i] + &v[v.len() - i - 1] == zero);
         assert!(&v[i] + &zero == v[i]);
-    
-        assert!(&v[i] * &neg_one == -&v[i]);
-        assert!(&v[i] * &zero == zero);
-        assert!(&v[i] * &one == v[i]);
     }
 
-    for i in 0..w.len() {
-        for j in 0..w.len() {
-            if (i != w.len() / 2) && (j != w.len() / 2) {
-                if (i < w.len() / 2) && (j < w.len() / 2) {
-                    assert!(&w[i] + &w[j] < zero);
-                    assert!(&w[i] * &w[j] > zero);
-                } else if (i > w.len() / 2) && (j > w.len() / 2) {
-                    assert!(&w[i] + &w[j] > zero);
-                    assert!(&w[i] * &w[j] > zero);
-                } else {
-                    assert!(&w[i] * &w[j] < zero);
-                }
+    for i in v.clone() {
+        for j in v.clone() {
+            if i < zero && j < zero {
+                assert!(&i + &j < zero);
+            } else if i > zero && j > zero {
+                assert!(&i + &j > zero);
+            }
+        }
+    }
+}
+
+#[test]
+fn test_mul() {
+    let v = day_gen(BROKEN);
+
+    let zero = Surreal {
+        left: vec![],
+        right: vec![],
+    };
+
+    let one = Surreal {
+        left: vec![zero.clone()],
+        right: vec![],
+    };
+
+    let neg_one = Surreal {
+        left: vec![],
+        right: vec![zero.clone()],
+    };
+
+    for i in v.clone() {
+        assert!(&i * &neg_one == -&i);
+        assert!(&i * &zero == zero);
+        assert!(&i * &one == i);
+    }
+
+    for i in v.clone() {
+        for j in v.clone() {
+            if (i < zero && j < zero) || (i > zero && j > zero) {
+                assert!(&i * &j > zero);
+            } else if (i < zero && j > zero) || (i > zero && j < zero) {
+                assert!(&i * &j < zero);
+            } else {
+                assert!(&i * &j == zero);
             }
         }
     }
 }
 
 fn day_gen(days: i32) -> Vec<Surreal> {
-    if days == 0 {
+    if days == 1 {
         return vec![Surreal {
             left: vec![],
             right: vec![],
@@ -79,34 +93,27 @@ fn day_gen(days: i32) -> Vec<Surreal> {
     }
 
     let v = day_gen(days - 1);
-    let mut res = vec![];
-    let c = |sur: &Surreal| Surreal {
-        left: sur.left.clone(),
-        right: sur.right.clone(),
-    };
+    let mut w = vec![];
+
+    w.push(Surreal {
+        left: vec![],
+        right: vec![v[0].clone()],
+    });
 
     for i in 0..v.len() {
-        res.push(c(&v[i]));
+        w.push(v[i].clone());
         if i != v.len() - 1 {
-            res.push(Surreal {
-                left: vec![c(&v[i])],
-                right: vec![c(&v[i + 1])],
+            w.push(Surreal {
+                left: vec![v[i].clone()],
+                right: vec![v[i + 1].clone()],
             });
         }
     }
 
-    res.insert(
-        0,
-        Surreal {
-            left: vec![],
-            right: vec![c(&v[0])],
-        },
-    );
-
-    res.push(Surreal {
-        left: vec![c(&v[v.len() - 1])],
+    w.push(Surreal {
+        left: vec![v[v.len() - 1].clone()],
         right: vec![],
     });
 
-    res
+    w
 }
