@@ -2,9 +2,9 @@
 //! *[Surreal Numbers](https://www.amazon.com/dp/0201038129)* by Donald Knuth. This crate provides
 //! an interface to the rules and theorems in the book, as well as a comprehensive surreal type.
 
-mod sur;
+mod repr;
 
-pub use sur::Surreal;
+pub use repr::Surreal;
 
 #[cfg(test)]
 mod tests;

@@ -2,16 +2,16 @@ use std::cmp::Ordering;
 use std::fmt;
 use std::ops;
 
-mod first;
-mod second;
+mod arith;
+mod order;
 
 /// A struct to represent surreal numbers with non-infinite sets.
 ///
 /// **N.B.** Currently, multiplication does not work for numbers on or after day 4.
 #[derive(Debug, Clone)]
 pub struct Surreal {
-    pub left: Vec<Surreal>,
-    pub right: Vec<Surreal>,
+    left: Vec<Surreal>,
+    right: Vec<Surreal>,
 }
 
 impl Surreal {
@@ -38,18 +38,18 @@ impl Surreal {
     pub fn new(left: Vec<&Surreal>, right: Vec<&Surreal>) -> Surreal {
         for xl in &left {
             for xr in &right {
-                if first::leq(xr, xl) {
+                if order::leq(xr, xl) {
                     panic!("Items in the left set must be less than items in the right set");
                 }
             }
         }
 
         Surreal {
-            left: first::cnv(left),
-            right: first::cnv(right),
+            left: order::cnv(left),
+            right: order::cnv(right),
         }
     }
-
+    
     /// Returns the left set of a surreal number (as a `Vec<Surreal>` instead of a
     /// `Vec<&Surreal>`).
     ///
@@ -85,7 +85,7 @@ impl Surreal {
 
 impl PartialEq for Surreal {
     fn eq(&self, other: &Surreal) -> bool {
-        first::leq(self, other) && first::leq(other, self)
+        order::leq(self, other) && order::leq(other, self)
     }
 }
 
@@ -93,9 +93,9 @@ impl Eq for Surreal {}
 
 impl PartialOrd for Surreal {
     fn partial_cmp(&self, other: &Surreal) -> Option<Ordering> {
-        if !first::leq(self, other) {
+        if !order::leq(self, other) {
             Some(Ordering::Greater)
-        } else if !first::leq(other, self) {
+        } else if !order::leq(other, self) {
             Some(Ordering::Less)
         } else {
             Some(Ordering::Equal)
@@ -107,7 +107,7 @@ impl<'a, 'b> ops::Add<&'b Surreal> for &'a Surreal {
     type Output = Surreal;
 
     fn add(self, other: &'b Surreal) -> Surreal {
-        second::add(self, other)
+        arith::add(self, other)
     }
 }
 
@@ -115,7 +115,7 @@ impl<'a, 'b> ops::Mul<&'b Surreal> for &'a Surreal {
     type Output = Surreal;
 
     fn mul(self, other: &'b Surreal) -> Surreal {
-        second::mul(self, other)
+        arith::mul(self, other)
     }
 }
 
@@ -123,7 +123,7 @@ impl<'a> ops::Neg for &'a Surreal {
     type Output = Surreal;
 
     fn neg(self) -> Surreal {
-        second::neg(self)
+        arith::neg(self)
     }
 }
 
@@ -131,25 +131,12 @@ impl<'a, 'b> ops::Sub<&'b Surreal> for &'a Surreal {
     type Output = Surreal;
 
     fn sub(self, other: &'b Surreal) -> Surreal {
-        second::add(self, &second::neg(other))
+        arith::add(self, &arith::neg(other))
     }
 }
 
 impl fmt::Display for Surreal {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let fmt_vec = |v: &Vec<Surreal>| {
-            let mut s = String::new();
-            for i in v {
-                s.push_str(format!("{}", i).as_str());
-            }
-            s
-        };
-
-        write!(
-            f,
-            "Surreal ({{{}}}, {{{}}})",
-            fmt_vec(&self.left),
-            fmt_vec(&self.right)
-        )
+        write!(f, "{:#?}", self) // alias to debug print
     }
 }

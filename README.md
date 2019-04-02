@@ -2,7 +2,7 @@
 
 ![https://travis-ci.com/realtable/surreal](https://travis-ci.com/realtable/surreal.svg)
 ![https://github.com/realtable/surreal/issues](https://img.shields.io/github/issues/realtable/surreal.svg)
-![https://crates.io/crates/surreal](https://img.shields.io/badge/cargo-unsafesc-brightgreen.svg)
+![https://crates.io/crates/surreal](https://img.shields.io/badge/cargo-surreal-brightgreen.svg)
 
 `surreal` is a Rust library that implements J. H. Conway's surreal numbers, as
 explained in the book *[Surreal Numbers](https://www.amazon.com/dp/0201038129)*
@@ -12,10 +12,11 @@ the book and (so far) contains:
 * a basic surreal type
   * comparison and ordering
   * arithmetic system
+* ~~decimal/surreal conversion~~
+  * ~~finite binary representable numbers~~
 * ~~numbers past aleph day~~
   * ~~infinite sets~~
   * ~~constants (ω and ε)~~
-* ~~decimal/surreal conversion~~
 * ~~pseudo-number implementation~~
 
 | home  | https://github.com/realtable/surreal    |
