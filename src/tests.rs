@@ -1,11 +1,12 @@
 use super::Surreal;
+use super::stof;
 
-static TESTS: i32 = 5;
-static BROKEN: i32 = 3;
+static PASS: i32 = 5;
+static FAIL: i32 = 3;
 
 #[test]
 fn test_gt_eq_lt() {
-    let v = day_gen(TESTS);
+    let v = day_gen(PASS);
 
     for i in 0..v.len() {
         for j in 0..v.len() {
@@ -22,7 +23,7 @@ fn test_gt_eq_lt() {
 
 #[test]
 fn test_add_neg() {
-    let v = day_gen(TESTS);
+    let v = day_gen(PASS);
     let zero = Surreal::new(vec![], vec![]);
 
     for i in 0..v.len() {
@@ -44,7 +45,7 @@ fn test_add_neg() {
 
 #[test]
 fn test_mul_inv() {
-    let v = day_gen(BROKEN);
+    let v = day_gen(FAIL);
     let zero = Surreal::new(vec![], vec![]);
     let one = Surreal::new(vec![&zero], vec![]);
     let neg_one = Surreal::new(vec![], vec![&zero]);
@@ -68,6 +69,16 @@ fn test_mul_inv() {
     }
 }
 
+#[test]
+fn test_stof() {
+    let v = day_gen(PASS);
+    let w = xtra_gen(PASS);
+    
+    for i in 0..v.len() {
+        assert!(stof(&v[i]) == w[i]);
+    }
+}
+
 fn day_gen(days: i32) -> Vec<Surreal> {
     if days == 1 {
         return vec![Surreal::new(vec![], vec![])];
@@ -85,5 +96,25 @@ fn day_gen(days: i32) -> Vec<Surreal> {
     }
 
     w.push(Surreal::new(vec![&v[v.len() - 1]], vec![]));
+    w
+}
+
+fn xtra_gen(days: i32) -> Vec<f32> {
+    if days == 1 {
+        return vec![0.0];
+    }
+
+    let v = xtra_gen(days - 1);
+    let mut w = vec![];
+    w.push(v[0] - 1.0);
+
+    for i in 0..v.len() {
+        w.push(v[i]);
+        if i != v.len() - 1 {
+            w.push((v[i] + &v[i + 1]) / 2.0);
+        }
+    }
+
+    w.push(v[v.len() - 1] + 1.0);
     w
 }

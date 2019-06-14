@@ -12,8 +12,9 @@ the book and (so far) contains:
 * a basic surreal type
   * comparison and ordering
   * arithmetic system
-* ~~decimal/surreal conversion~~
-  * ~~finite binary representable numbers~~
+* decimal/surreal conversion
+  * surreal to float
+  * ~~float to surreal~~
 * ~~numbers past aleph day~~
   * ~~infinite sets~~
   * ~~constants (ω and ε)~~
