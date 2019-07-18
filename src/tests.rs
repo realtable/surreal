@@ -6,8 +6,9 @@ static PASS: i32 = 5;
 static FAIL: i32 = 3;
 
 #[test]
-fn test_cmp() {
+fn repr_cmp() {
     let v = day_gen(PASS);
+    println!("{}", v[0].clone());
 
     for i in 0..v.len() {
         for j in 0..v.len() {
@@ -23,7 +24,7 @@ fn test_cmp() {
 }
 
 #[test]
-fn test_add() {
+fn repr_add() {
     let v = day_gen(PASS);
     let zero = Surreal::new(vec![], vec![]);
 
@@ -44,9 +45,8 @@ fn test_add() {
 }
 
 #[test]
-fn test_neg() {
+fn repr_neg() {
     let v = day_gen(PASS);
-    let zero = Surreal::new(vec![], vec![]);
 
     for i in 0..v.len() {
         assert!(-&v[i] == v[v.len() - i - 1]);
@@ -54,7 +54,7 @@ fn test_neg() {
 }
 
 #[test]
-fn test_mul() {
+fn repr_mul() {
     let v = day_gen(FAIL);
     let zero = Surreal::new(vec![], vec![]);
     let one = Surreal::new(vec![&zero], vec![]);
@@ -80,7 +80,7 @@ fn test_mul() {
 }
 
 #[test]
-fn test_stof() {
+fn conv_stof() {
     let v = day_gen(PASS);
     let w = xtra_gen(PASS);
 
@@ -90,7 +90,7 @@ fn test_stof() {
 }
 
 #[test]
-fn test_ftos() {
+fn conv_ftos() {
     let v = day_gen(FAIL);
     let w = xtra_gen(FAIL);
 

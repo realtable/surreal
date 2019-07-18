@@ -7,7 +7,8 @@ mod order;
 
 /// A struct to represent surreal numbers with non-infinite sets.
 ///
-/// **N.B.** Currently, multiplication does not work for numbers on or after day 4.
+/// **N.B.** Currently, multiplication does not work for numbers created on or after day 4, i.e.
+/// those with 4 or more layers of nested surreal numbers.
 #[derive(Debug, Clone)]
 pub struct Surreal {
     left: Vec<Surreal>,
@@ -26,14 +27,9 @@ impl Surreal {
     /// # Examples
     ///
     /// ```
-    /// // the lines below will compile
     /// let zero = surreal::Surreal::new(vec![], vec![]);
     /// let one = surreal::Surreal::new(vec![&zero], vec![]);
     /// let neg_one = surreal::Surreal::new(vec![], vec![&zero]);
-    ///
-    /// // the lines below will panic
-    /// // let err = surreal::Surreal::new(vec![&one], vec![&neg_one]);
-    /// // let err = surreal::Surreal::new(vec![&zero], vec![&zero]);
     /// ```
     pub fn new(left: Vec<&Surreal>, right: Vec<&Surreal>) -> Surreal {
         for xl in &left {

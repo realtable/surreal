@@ -39,8 +39,9 @@ pub fn stof(sur: &Surreal) -> f32 {
 ///
 /// Given that all floating point numbers, i.e. all finite binary representable numbers, map to a
 /// surreal number with non-infinite sets, theoretically there is no case where this function will
-/// panic. However, given this function uses the currently broken multiplication feature, `ftos()`
-/// will not work for numbers produced on or after day 4.
+/// panic. However, because this function uses the currently broken multiplication feature,
+/// `ftos()` will not work for numbers created on or after day 4, i.e. those with 4 or more layers
+/// of nested surreal numbers.
 ///
 /// # Examples
 ///
