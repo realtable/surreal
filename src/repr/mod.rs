@@ -49,7 +49,7 @@ impl Surreal {
             right: order::cnv(right),
         }
     }
-    
+
     /// Returns the left set of a surreal number (as a `Vec<Surreal>` instead of a
     /// `Vec<&Surreal>`).
     ///

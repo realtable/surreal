@@ -14,7 +14,7 @@ the book and (so far) contains:
   * arithmetic system
 * decimal/surreal conversion
   * surreal to float
-  * ~~float to surreal~~
+  * float to surreal
 * ~~numbers past aleph day~~
   * ~~infinite sets~~
   * ~~constants (ω and ε)~~

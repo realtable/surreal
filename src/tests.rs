@@ -1,11 +1,12 @@
-use super::Surreal;
+use super::ftos;
 use super::stof;
+use super::Surreal;
 
 static PASS: i32 = 5;
 static FAIL: i32 = 3;
 
 #[test]
-fn test_gt_eq_lt() {
+fn test_cmp() {
     let v = day_gen(PASS);
 
     for i in 0..v.len() {
@@ -22,12 +23,11 @@ fn test_gt_eq_lt() {
 }
 
 #[test]
-fn test_add_neg() {
+fn test_add() {
     let v = day_gen(PASS);
     let zero = Surreal::new(vec![], vec![]);
 
     for i in 0..v.len() {
-        assert!(-&v[i] == v[v.len() - i - 1]);
         assert!(&v[i] + &v[v.len() - i - 1] == zero);
         assert!(&v[i] + &zero == v[i]);
     }
@@ -44,7 +44,17 @@ fn test_add_neg() {
 }
 
 #[test]
-fn test_mul_inv() {
+fn test_neg() {
+    let v = day_gen(PASS);
+    let zero = Surreal::new(vec![], vec![]);
+
+    for i in 0..v.len() {
+        assert!(-&v[i] == v[v.len() - i - 1]);
+    }
+}
+
+#[test]
+fn test_mul() {
     let v = day_gen(FAIL);
     let zero = Surreal::new(vec![], vec![]);
     let one = Surreal::new(vec![&zero], vec![]);
@@ -73,9 +83,19 @@ fn test_mul_inv() {
 fn test_stof() {
     let v = day_gen(PASS);
     let w = xtra_gen(PASS);
-    
+
     for i in 0..v.len() {
         assert!(stof(&v[i]) == w[i]);
+    }
+}
+
+#[test]
+fn test_ftos() {
+    let v = day_gen(FAIL);
+    let w = xtra_gen(FAIL);
+
+    for i in 0..v.len() {
+        assert!(ftos(w[i]) == v[i]);
     }
 }
 
