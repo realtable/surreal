@@ -6,9 +6,6 @@ mod arith;
 mod order;
 
 /// A struct to represent surreal numbers with non-infinite sets.
-///
-/// **N.B.** Currently, multiplication does not work for numbers created on or after day 4, i.e.
-/// those with 4 or more layers of nested surreal numbers.
 #[derive(Debug, Clone)]
 pub struct Surreal {
     left: Vec<Surreal>,
@@ -107,6 +104,8 @@ impl<'a, 'b> ops::Add<&'b Surreal> for &'a Surreal {
     }
 }
 
+/// **Note**: Currently, multiplication does not work for numbers created on or after day 4, i.e.
+/// those with 4 or more layers of nested surreal numbers.
 impl<'a, 'b> ops::Mul<&'b Surreal> for &'a Surreal {
     type Output = Surreal;
 

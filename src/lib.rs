@@ -3,10 +3,12 @@
 //! an interface to the rules and theorems in the book, as well as a comprehensive surreal type.
 
 mod conv;
+mod inf;
 mod repr;
 
 pub use conv::ftos;
 pub use conv::stof;
+pub use inf::SurrealInf;
 pub use repr::Surreal;
 
 #[cfg(test)]

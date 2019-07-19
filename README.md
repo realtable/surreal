@@ -15,9 +15,8 @@ the book and (so far) contains:
 * decimal/surreal conversion
   * surreal to float
   * float to surreal
-* ~~numbers past aleph day~~
-  * ~~infinite sets~~
-  * ~~constants (ω and ε)~~
+* numbers past aleph day
+  * infinite sets
 * ~~pseudo-number implementation~~
 
 | home  | https://github.com/realtable/surreal    |
