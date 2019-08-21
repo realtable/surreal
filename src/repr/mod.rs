@@ -43,6 +43,23 @@ impl Surreal {
         }
     }
 
+    /// Creates a new pseudo-surreal number given two vectors of references to surreal numbers.
+    /// While each vector still corresponds to a left set and a right set, each number in the left
+    /// set doesn't have to be less than all numbers in the right set.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let zero = surreal::Surreal::new(vec![], vec![]);
+    /// let pseudo = surreal::Surreal::pseudo(vec![&zero], vec![&zero]);
+    /// ```
+    pub fn pseudo(left: Vec<&Surreal>, right: Vec<&Surreal>) -> Surreal {
+        Surreal {
+            left: order::cnv(left),
+            right: order::cnv(right),
+        }
+    }
+
     /// Returns the left set of a surreal number (as a `Vec<Surreal>` instead of a
     /// `Vec<&Surreal>`).
     ///

@@ -17,7 +17,7 @@ the book and (so far) contains:
   * float to surreal
 * numbers past aleph day
   * infinite sets
-* ~~pseudo-number implementation~~
+* pseudo-number implementation
 
 | home  | https://github.com/realtable/surreal    |
 |:----- |:--------------------------------------- |

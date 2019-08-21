@@ -7,3 +7,9 @@ rust:
 matrix:
   allow_failures:
   - rust: nightly
+deploy:
+  provider: cargo
+  token:
+    secure: jn0PSuzyDNfbSC1XFWDW/MKFzr0Zv7V0Lz1tjEs0Rhd4uJ3VzyDHXb+x8bcJoiJZ3QzGi/ln4S4a0S7cYKErK/O9V27I6oT3ogtSlq5J04k3g362ke+mAk6fuYipnRdfiGXTH8ygsEenW2wOiNFp+acmCmCxq1SVPalkACqLCKfrTYPzO/RCbcL5MVWbu17iBDTEcXHOIWISEAWmdk5McaWcmmXAY5WDPD2goULJBq8uZvMKa7eSlkskDQcI4CqAMpnoLqd8Bd2sBxl0lKeRyagy+UsTcQPF9Mc3Z1HG7nmCv8OHDsdAZjEZlYswL2AgFdSPuHCd/tx9/LeYfwk5tj9L760kXWKrAgpHUnI0jimk1veVUR1yWVc+MO0D91uOZ3GOlFBodT4smRpJj0QgU+IgIYmQG8w3zLSxgw5lZjcg5IDmZBKkFVs6JzS5Jl3RqzuAsE1R2p0LOIW3vkK+H79oj3dsM/j/hCYSDyJouTnE8Tl/Iwe3Ainw/k8CSXZII1mY/gWVtpTOqhLNwvumXnLCcH/BxeIR1Jobur1Ydvch3zhO0+9rDdo5PnKbP60KqGiXzKWNNQoen9etT2ItJhRAd3DSp7givHooAY5ZCBVOxHl8NNcjai+BP9X34mKMzlINOGxrcy+DjHzrU0X3nngbF2XBE/wbiSyntn33z20=
+  on:
+    tags: true
