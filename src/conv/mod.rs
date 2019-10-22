@@ -1,4 +1,5 @@
 use super::Surreal;
+use std::f32::EPSILON;
 
 mod extra;
 
@@ -67,7 +68,8 @@ pub fn ftos(fl: f32) -> Surreal {
         diff = neg_one.clone();
     }
 
-    while fl != stof(&curr) {
+    while (fl - stof(&curr)).abs() > EPSILON {
+        // check within some error
         curr = min.clone();
         while fl.abs() > stof(&curr).abs() {
             min = curr.clone();

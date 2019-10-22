@@ -8,7 +8,6 @@ static FAIL: i32 = 3;
 #[test]
 fn repr_cmp() {
     let v = day_gen(PASS);
-    println!("{}", v[0].clone());
 
     for i in 0..v.len() {
         for j in 0..v.len() {
@@ -74,6 +73,27 @@ fn repr_mul() {
                 assert!(&i * &j < zero);
             } else {
                 assert!(&i * &j == zero);
+            }
+        }
+    }
+}
+
+#[test]
+fn repr_div() {
+    let v = day_gen(PASS);
+    let zero = Surreal::new(vec![], vec![]);
+    let one = Surreal::new(vec![&zero], vec![]);
+    let neg_one = Surreal::new(vec![], vec![&zero]);
+
+    for i in v.clone() {
+        assert!(&i / &neg_one == -&i);
+        assert!(&i / &one == i);
+    }
+
+    for i in 0..v.len() {
+        for j in 0..v.len() {
+            if (i == v.len() - i - 1) && (v[i] != zero) {
+                assert!(&one / &v[i] == v[j]);
             }
         }
     }

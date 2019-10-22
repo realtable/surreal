@@ -121,6 +121,22 @@ impl<'a, 'b> ops::Add<&'b Surreal> for &'a Surreal {
     }
 }
 
+/// # Panics
+///
+/// Panics if the divisor is zero.
+impl<'a, 'b> ops::Div<&'b Surreal> for &'a Surreal {
+    type Output = Surreal;
+
+    fn div(self, other: &'b Surreal) -> Surreal {
+        let zero = Surreal::new(vec![], vec![]);
+        if other == &zero {
+            panic!("Cannot divide by zero");
+        }
+
+        arith::mul(self, &arith::inv(other))
+    }
+}
+
 /// **Note**: Currently, multiplication does not work for numbers created on or after day 4, i.e.
 /// those with 4 or more layers of nested surreal numbers.
 impl<'a, 'b> ops::Mul<&'b Surreal> for &'a Surreal {
