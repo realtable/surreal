@@ -7,8 +7,7 @@ mod extra;
 ///
 /// # Panics
 ///
-/// Given that all surreal numbers with non-infinite sets match to a finite binary representable
-/// number, this function covers all possible values of `Surreal` and will not panic.
+/// Panics if given a psuedo-surreal number.
 ///
 /// # Examples
 ///
@@ -20,6 +19,10 @@ mod extra;
 /// assert!(surreal::stof(&one) == 1.0);
 /// ```
 pub fn stof(sur: &Surreal) -> f32 {
+    if extra::is_pseudo(sur) {
+        panic!("Cannot convert pseudo-surreal numbers to real numbers");
+    }
+
     let mut left: Vec<f32> = vec![];
     let mut right: Vec<f32> = vec![];
 

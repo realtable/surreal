@@ -121,16 +121,22 @@ impl<'a, 'b> ops::Add<&'b Surreal> for &'a Surreal {
     }
 }
 
+/// **Note**: Currently, division does not work for numbers created on or after day 4, i.e. numbers
+/// with 4 or more layers of nested sets.
+///
 /// # Panics
 ///
-/// Panics if the divisor is zero.
+/// Panics if the divisor is zero. Panics if the quotient will have infinite sets.
 impl<'a, 'b> ops::Div<&'b Surreal> for &'a Surreal {
     type Output = Surreal;
 
     fn div(self, other: &'b Surreal) -> Surreal {
         let zero = Surreal::new(vec![], vec![]);
+
         if other == &zero {
             panic!("Cannot divide by zero");
+        } else if (super::stof(self) / super::stof(other)).fract() * 256.0 % 1.0 != 0.0 {
+            panic!("Quotient will have infinite sets"); // isn't representable as finite f32
         }
 
         arith::mul(self, &arith::inv(other))
@@ -138,7 +144,7 @@ impl<'a, 'b> ops::Div<&'b Surreal> for &'a Surreal {
 }
 
 /// **Note**: Currently, multiplication does not work for numbers created on or after day 4, i.e.
-/// those with 4 or more layers of nested surreal numbers.
+/// numbers with 4 or more layers of nested sets.
 impl<'a, 'b> ops::Mul<&'b Surreal> for &'a Surreal {
     type Output = Surreal;
 
@@ -167,4 +173,20 @@ impl fmt::Display for Surreal {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:#?}", self) // alias to debug print
     }
+}
+
+/// Tests if a division will produce a result with finite sets. Useful in making sure a division of
+/// surreal numbers won't panic.
+///
+/// # Examples
+///
+/// ```
+/// let zero = surreal::Surreal::new(vec![], vec![]);
+/// let one = surreal::Surreal::new(vec![], vec![&zero]);
+///
+/// if surreal::is_finite(&zero, &one) {
+///     println!("{}", &zero / &one);
+/// }
+pub fn is_finite(x: &Surreal, y: &Surreal) -> bool {
+    (super::stof(&x) / super::stof(&y)).fract() * 256.0 % 1.0 == 0.0
 }

@@ -9,6 +9,7 @@ mod repr;
 pub use conv::ftos;
 pub use conv::stof;
 pub use inf::SurrealInf;
+pub use repr::is_finite;
 pub use repr::Surreal;
 
 #[cfg(test)]

@@ -1,3 +1,5 @@
+use super::Surreal;
+
 pub fn logic(left: &mut Vec<f32>, right: &mut Vec<f32>) -> f32 {
     let res: f32;
 
@@ -15,6 +17,20 @@ pub fn logic(left: &mut Vec<f32>, right: &mut Vec<f32>) -> f32 {
         left.sort_by(|a, b| a.partial_cmp(b).unwrap());
         right.sort_by(|a, b| a.partial_cmp(b).unwrap());
         res = (left.pop().unwrap() + right[0]) / 2.0
+    }
+
+    res
+}
+
+pub fn is_pseudo(sur: &Surreal) -> bool {
+    let mut res = false;
+
+    for xl in sur.left() {
+        for xr in sur.right() {
+            if xr < xl {
+                res = true;
+            }
+        }
     }
 
     res

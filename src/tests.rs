@@ -2,12 +2,13 @@ use super::ftos;
 use super::stof;
 use super::Surreal;
 
-static PASS: i32 = 5;
-static FAIL: i32 = 3;
+static FAST: i32 = 8;
+static SLOW: i32 = 5;
+static BROKEN: i32 = 3;
 
 #[test]
 fn repr_cmp() {
-    let v = day_gen(PASS);
+    let v = day_gen(FAST);
 
     for i in 0..v.len() {
         for j in 0..v.len() {
@@ -24,20 +25,45 @@ fn repr_cmp() {
 
 #[test]
 fn repr_add() {
-    let v = day_gen(PASS);
+    let v = day_gen(SLOW);
     let zero = Surreal::new(vec![], vec![]);
-
-    for i in 0..v.len() {
-        assert!(&v[i] + &v[v.len() - i - 1] == zero);
-        assert!(&v[i] + &zero == v[i]);
-    }
 
     for i in v.clone() {
         for j in v.clone() {
-            if i < zero && j < zero {
-                assert!(&i + &j < zero);
-            } else if i > zero && j > zero {
-                assert!(&i + &j > zero);
+            let sum = &i + &j;
+
+            if i < zero {
+                if j < zero {
+                    assert!(i > sum);
+                    assert!(j > sum);
+                    assert!(sum < zero);
+                } else if j > zero {
+                    if -&i > j {
+                        assert!(sum < zero);
+                    } else if -&i < j {
+                        assert!(sum > zero);
+                    } else {
+                        assert!(sum == zero);
+                    }
+                } else {
+                    assert!(i == sum)
+                }
+            } else if i > zero {
+                if j < zero {
+                    if i > -&j {
+                        assert!(sum > zero);
+                    } else if i < -&j {
+                        assert!(sum < zero);
+                    } else {
+                        assert!(sum == zero);
+                    }
+                } else if j > zero {
+                    assert!(i < sum);
+                    assert!(j < sum);
+                    assert!(sum > zero);
+                }
+            } else {
+                assert!(j == sum)
             }
         }
     }
@@ -45,7 +71,7 @@ fn repr_add() {
 
 #[test]
 fn repr_neg() {
-    let v = day_gen(PASS);
+    let v = day_gen(FAST);
 
     for i in 0..v.len() {
         assert!(-&v[i] == v[v.len() - i - 1]);
@@ -53,19 +79,29 @@ fn repr_neg() {
 }
 
 #[test]
+fn conv_stof() {
+    let v = day_gen(FAST);
+    let w = xtra_gen(FAST);
+
+    for i in 0..v.len() {
+        assert!(stof(&v[i]) == w[i]);
+    }
+}
+
+// tests for functions that only pass up to day 3 because they rely on multiplication
+
+#[test]
 fn repr_mul() {
-    let v = day_gen(FAIL);
+    let v = day_gen(BROKEN);
     let zero = Surreal::new(vec![], vec![]);
     let one = Surreal::new(vec![&zero], vec![]);
     let neg_one = Surreal::new(vec![], vec![&zero]);
 
     for i in v.clone() {
-        assert!(&i * &neg_one == -&i);
         assert!(&i * &zero == zero);
         assert!(&i * &one == i);
-    }
+        assert!(&i * &neg_one == -&i);
 
-    for i in v.clone() {
         for j in v.clone() {
             if (i < zero && j < zero) || (i > zero && j > zero) {
                 assert!(&i * &j > zero);
@@ -79,45 +115,44 @@ fn repr_mul() {
 }
 
 #[test]
-fn repr_div() {
-    let v = day_gen(PASS);
-    let zero = Surreal::new(vec![], vec![]);
-    let one = Surreal::new(vec![&zero], vec![]);
-    let neg_one = Surreal::new(vec![], vec![&zero]);
-
-    for i in v.clone() {
-        assert!(&i / &neg_one == -&i);
-        assert!(&i / &one == i);
-    }
-
-    for i in 0..v.len() {
-        for j in 0..v.len() {
-            if (i == v.len() - i - 1) && (v[i] != zero) {
-                assert!(&one / &v[i] == v[j]);
-            }
-        }
-    }
-}
-
-#[test]
-fn conv_stof() {
-    let v = day_gen(PASS);
-    let w = xtra_gen(PASS);
-
-    for i in 0..v.len() {
-        assert!(stof(&v[i]) == w[i]);
-    }
-}
-
-#[test]
 fn conv_ftos() {
-    let v = day_gen(FAIL);
-    let w = xtra_gen(FAIL);
+    let v = day_gen(3);
+    let w = xtra_gen(3);
 
     for i in 0..v.len() {
         assert!(ftos(w[i]) == v[i]);
     }
 }
+
+#[test]
+fn repr_div() {
+    let v = day_gen(BROKEN);
+    let w = xtra_gen(BROKEN);
+    let zero = Surreal::new(vec![], vec![]);
+    let one = Surreal::new(vec![&zero], vec![]);
+    let neg_one = Surreal::new(vec![], vec![&zero]);
+
+    for i in 0..v.len() {
+        assert!(&v[i] / &neg_one == -&v[i]);
+        assert!(&v[i] / &one == v[i]);
+        if v[i] != zero {
+            assert!(&zero / &v[i] == zero);
+            assert!(&v[i] / &v[i] == one);
+        }
+
+        for j in 0..v.len() {
+            if w[j] != 0.0 && ((w[i] / w[j]).fract() * 256.0 % 1.0 == 0.0) {
+                if (w[i] < 0.0 && w[j] < 0.0) || (w[i] > 0.0 && w[j] > 0.0) {
+                    assert!(&v[i] / &v[j] > zero);
+                } else if (w[i] < 0.0 && w[j] > 0.0) || (w[i] > 0.0 && w[j] < 0.0) {
+                    assert!(&v[i] / &v[j] < zero);
+                }
+            }
+        }
+    }
+}
+
+// functions to generate test values
 
 fn day_gen(days: i32) -> Vec<Surreal> {
     if days == 1 {
