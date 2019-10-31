@@ -1,14 +1,17 @@
 use super::ftos;
+use super::is_divisible;
 use super::stof;
 use super::Surreal;
 
-static FAST: i32 = 8;
-static SLOW: i32 = 5;
-static BROKEN: i32 = 3;
+static HI: i32 = 8; // well optimised
+static AV: i32 = 5; // sorta optimised
+static LO: i32 = 3; // not optimised
+
+// comprehensive tests
 
 #[test]
 fn repr_cmp() {
-    let v = day_gen(FAST);
+    let v = day_gen(HI);
 
     for i in 0..v.len() {
         for j in 0..v.len() {
@@ -24,8 +27,29 @@ fn repr_cmp() {
 }
 
 #[test]
+fn repr_neg() {
+    let v = day_gen(HI);
+
+    for i in 0..v.len() {
+        assert!(-&v[i] == v[v.len() - i - 1]);
+    }
+}
+
+#[test]
+fn conv_stof() {
+    let v = day_gen(HI);
+    let w = xtra_gen(HI);
+
+    for i in 0..v.len() {
+        assert!(stof(&v[i]) == w[i]);
+    }
+}
+
+// semi-comprehensive tests
+
+#[test]
 fn repr_add() {
-    let v = day_gen(SLOW);
+    let v = day_gen(AV);
     let zero = Surreal::new(vec![], vec![]);
 
     for i in v.clone() {
@@ -70,29 +94,20 @@ fn repr_add() {
 }
 
 #[test]
-fn repr_neg() {
-    let v = day_gen(FAST);
+fn conv_ftos() {
+    let v = day_gen(AV);
+    let w = xtra_gen(AV);
 
     for i in 0..v.len() {
-        assert!(-&v[i] == v[v.len() - i - 1]);
+        assert!(ftos(w[i]) == v[i]);
     }
 }
 
-#[test]
-fn conv_stof() {
-    let v = day_gen(FAST);
-    let w = xtra_gen(FAST);
-
-    for i in 0..v.len() {
-        assert!(stof(&v[i]) == w[i]);
-    }
-}
-
-// tests for functions that only pass up to day 3 because they rely on multiplication
+// non-comprehensive tests
 
 #[test]
 fn repr_mul() {
-    let v = day_gen(BROKEN);
+    let v = day_gen(LO);
     let zero = Surreal::new(vec![], vec![]);
     let one = Surreal::new(vec![&zero], vec![]);
     let neg_one = Surreal::new(vec![], vec![&zero]);
@@ -115,19 +130,9 @@ fn repr_mul() {
 }
 
 #[test]
-fn conv_ftos() {
-    let v = day_gen(3);
-    let w = xtra_gen(3);
-
-    for i in 0..v.len() {
-        assert!(ftos(w[i]) == v[i]);
-    }
-}
-
-#[test]
 fn repr_div() {
-    let v = day_gen(BROKEN);
-    let w = xtra_gen(BROKEN);
+    let v = day_gen(LO);
+    let w = xtra_gen(LO);
     let zero = Surreal::new(vec![], vec![]);
     let one = Surreal::new(vec![&zero], vec![]);
     let neg_one = Surreal::new(vec![], vec![&zero]);
@@ -141,7 +146,7 @@ fn repr_div() {
         }
 
         for j in 0..v.len() {
-            if w[j] != 0.0 && ((w[i] / w[j]).fract() * 256.0 % 1.0 == 0.0) {
+            if w[j] != 0.0 && is_divisible(&v[i], &v[j]) {
                 if (w[i] < 0.0 && w[j] < 0.0) || (w[i] > 0.0 && w[j] > 0.0) {
                     assert!(&v[i] / &v[j] > zero);
                 } else if (w[i] < 0.0 && w[j] > 0.0) || (w[i] > 0.0 && w[j] < 0.0) {

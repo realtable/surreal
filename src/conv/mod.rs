@@ -1,7 +1,7 @@
 use super::Surreal;
 use std::f32::EPSILON;
 
-mod extra;
+pub mod extra;
 
 /// Converts a surreal number (with non-infinite sets) into a floating-point number.
 ///
@@ -19,7 +19,7 @@ mod extra;
 /// assert!(surreal::stof(&one) == 1.0);
 /// ```
 pub fn stof(sur: &Surreal) -> f32 {
-    if extra::is_pseudo(sur) {
+    if super::is_pseudo(sur) {
         panic!("Cannot convert pseudo-surreal numbers to real numbers");
     }
 
@@ -60,7 +60,6 @@ pub fn ftos(fl: f32) -> Surreal {
     let zero = Surreal::new(vec![], vec![]);
     let one = Surreal::new(vec![&zero], vec![]);
     let neg_one = Surreal::new(vec![], vec![&zero]);
-    let half = Surreal::new(vec![&zero], vec![&one]);
 
     let mut diff: Surreal;
     let mut curr = zero.clone();
@@ -78,7 +77,12 @@ pub fn ftos(fl: f32) -> Surreal {
             min = curr.clone();
             curr = &curr + &diff;
         }
-        diff = &diff * &half;
+
+        if diff > zero {
+            diff = Surreal::new(vec![&zero], vec![&diff]);
+        } else {
+            diff = Surreal::new(vec![&diff], vec![&zero]);
+        }
     }
 
     curr

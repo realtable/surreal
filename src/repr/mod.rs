@@ -184,9 +184,34 @@ impl fmt::Display for Surreal {
 /// let zero = surreal::Surreal::new(vec![], vec![]);
 /// let one = surreal::Surreal::new(vec![], vec![&zero]);
 ///
-/// if surreal::is_finite(&zero, &one) {
+/// if surreal::is_divisible(&zero, &one) {
 ///     println!("{}", &zero / &one);
 /// }
-pub fn is_finite(x: &Surreal, y: &Surreal) -> bool {
+pub fn is_divisible(x: &Surreal, y: &Surreal) -> bool {
     (super::stof(&x) / super::stof(&y)).fract() * 256.0 % 1.0 == 0.0
+}
+
+/// Tests if a given input is a pseudo-surreal number (created with `surreal::Surreal::pseudo`).
+///
+/// # Examples
+///
+/// ```
+/// let zero = surreal::Surreal::new(vec![], vec![]);
+/// assert!(!surreal::is_pseudo(&zero));
+///
+/// let some_pseudo = surreal::Surreal::pseudo(vec![&zero], vec![&zero]);
+/// assert!(surreal::is_pseudo(&some_pseudo));
+/// ```
+pub fn is_pseudo(sur: &Surreal) -> bool {
+    let mut res = false;
+
+    for xl in sur.left() {
+        for xr in sur.right() {
+            if xl >= xr {
+                res = true;
+            }
+        }
+    }
+
+    res
 }
